@@ -95,6 +95,17 @@ public class TrainingArea : MonoBehaviour
                 robot.transform.localPosition = new Vector3(UnityEngine.Random.Range(-2, 4), 0.15f, UnityEngine.Random.Range(-2, 4));
                 RobotAgent agent = robot.GetComponent<RobotAgent>();
                 agent.trainingArea = this;
+                if (i == 1)
+                {
+                    agent.GiveModel("RoboHelp", null);
+                    agent.type = 1;
+                }
+                else
+                {
+                    agent.GiveModel("RoboBlock", null);
+                    agent.type = 0;
+                    agent.moveSpeed = 3f; // Slower 
+                }
                 robots.Add(agent);
             }
             numRobots = newNumberRobots;

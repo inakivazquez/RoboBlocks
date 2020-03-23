@@ -12,16 +12,17 @@ public class RobotAgent : Agent
     public TrainingArea trainingArea;
     public GameObject blockPrefab;
 
+    public int type = 0; // 0=RoboBlock, 1=Helper
     private bool hasBlock = false;
     private GameObject carriedBlock = null;
-    private Rigidbody rigidbody;
+    private Rigidbody rbody;
 
     public override void InitializeAgent()
     {
         base.InitializeAgent();
-        rigidbody = GetComponent<Rigidbody>();
-        rigidbody.centerOfMass = Vector3.zero;
-        rigidbody.inertiaTensorRotation = Quaternion.identity;
+        rbody = GetComponent<Rigidbody>();
+        rbody.centerOfMass = Vector3.zero;
+        rbody.inertiaTensorRotation = Quaternion.identity;
     }
 
     public override void AgentReset()
@@ -63,10 +64,10 @@ public class RobotAgent : Agent
         }
 
         // Apply movement
-        rigidbody.MovePosition(transform.position + transform.forward * forwardAmount * moveSpeed * Time.fixedDeltaTime);
+        rbody.MovePosition(transform.position + transform.forward * forwardAmount * moveSpeed * Time.fixedDeltaTime);
         transform.Rotate(transform.up * turnAmount * turnSpeed * Time.fixedDeltaTime);
 
-        if(rigidbody.position.y < 0)
+        if(rbody.position.y < 0)
         {
             AddReward(-10f);
             this.transform.localPosition = new Vector3(0, 0.25f, 0);
@@ -148,12 +149,12 @@ public class RobotAgent : Agent
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.CompareTag("block"))
+        if (type==0 && collision.transform.CompareTag("block"))
         {
             if(!hasBlock)
                 CollectBlock(collision.gameObject);
         }
-        else if (collision.transform.CompareTag("targetzone"))
+        else if (type == 0 && collision.transform.CompareTag("targetzone"))
         {
             if(hasBlock)
                 DropBlock();
